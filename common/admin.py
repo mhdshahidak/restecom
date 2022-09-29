@@ -1,5 +1,5 @@
 from django.contrib import admin
-from . models import Product,Collection
+from . models import Product,Collection,User
 
 # Register your models here.
 
@@ -7,3 +7,4 @@ from . models import Product,Collection
 admin.site.register(Product)
 # admin.site.register(ProductImage)
 admin.site.register(Collection)
+admin.site.register(User)

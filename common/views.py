@@ -3,10 +3,16 @@ from multiprocessing import context
 from django.shortcuts import render,get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Collection, Product
+from .models import Collection, Product,User
 from .serializers import ProductSerializer,CollectionSerializer,ExeSerializer
 from rest_framework import status 
 from django.db.models import Count
+from . import serializers
+
+
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import AllowAny
+
 # Create your views here.
 
 
@@ -82,3 +88,9 @@ def work(request):
         serializer=Collection.objects.annotate(product_count=Count('product'))
 
    
+
+
+class RegisterView(CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = serializers.RegisterSerializer   
