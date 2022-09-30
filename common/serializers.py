@@ -1,87 +1,31 @@
 
 from rest_framework import serializers
-from . models import Product,Collection
+
 from django.contrib.auth.password_validation import validate_password
 from .models import User
-
-
-# for nested relation
-class CollectionSerializer(serializers.Serializer):
-    id= serializers.IntegerField()
-    category=serializers.CharField(max_length=225)
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 
 
 
-class ProductSerializer(serializers.Serializer):
-    id= serializers.IntegerField()
-    name=serializers.CharField(max_length=225)
-    max_offer_price=serializers.FloatField()
+class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super(UserTokenObtainPairSerializer, cls).get_token(user)
+        return token
 
-    # price is not in  modal Product we made a function to it
-    price=serializers.SerializerMethodField(method_name="calculate")
-    def calculate(self, product: Product):
-        return product.max_offer_price *1.1  
-
-    #1st method how to add forigenkey in  where it gives an id of the collection
-    # collection =serializers.PrimaryKeyRelatedField(
-    #     queryset=Collection.objects.all()
-    # )
-    #2nd method how to add forigenkey in  where it gives an string name of the fk
-    # collection =serializers.StringRelatedField()
-
-    #3rd how to add in nested object
-    # collection = CollectionSerializer()
-
-    #4rd how to redirect to an endpoint
-    collection = serializers.HyperlinkedRelatedField(
-        queryset=Collection.objects.all(),
-        view_name="collection-detail"
-    )
-
-
-
-    # # validation
-    #     def validate(self,data):
-    #         if data['password'] !=data['conform_password']:
-    #             return serializers,ValueError('passmust be same')
-    #         return(data)
-
-
-
-
-
-# modal serilizer it is used because of when we make chnage in model we should also change in serilizser to avoid this
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields =['id','name','max_offer_price','collection']
-        # or
-        # fields ='__all__'
-
-    # # to create a data    
-    # def create(self, validated_data):
-    #     product=Product(**validated_data)
-    #     product.other=1
-    #     product.save()
-    #     return product
-
-    # # to update
-    # def update(self, instance, validated_data):
-    #     instance.name=validated_data.get('name')
-    #     instance.save()
-    #     return instance
-
-        
-
-
-
-class ExeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Collection
-        fields =['id','category','count']
-        count= serializers.IntegerField()
+    def validate(cls, attrs):
+        data = super(UserTokenObtainPairSerializer, cls).validate(attrs)
+        refresh = cls.get_token(cls.user)
+        data["refresh"] = str(refresh)
+        data["access"] = str(refresh.access_token)
+        # data["is_customer"] = bool(cls.user.is_customer)
+        # data["is_worker"] = bool(cls.user.is_worker)
+        # data["is_supervisor"] = bool(cls.user.is_supervisor)
+        # data["is_staff"] = bool(cls.user.is_staff)
+        # data["is_superuser"] = bool(cls.user.is_superuser)
+        return data
 
 
 
@@ -120,3 +64,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data["password"])
         user.save()
         return user
+
+class LoginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username", "password"]
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        exclude = ["user_permissions", "password","groups"]
