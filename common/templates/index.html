@@ -11,6 +11,8 @@
 
 <body>
   <h1 id="name"></h1>
+  <h2 id="email"></h2>
+  <h3 id="username"></h3>
   <!-- <input type="text" name="" id="name"> -->
   <button id="logout">Logout</button>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -48,7 +50,9 @@
         statusCode: {
           200: function (response) {
             // alert(response.user.user)
-            $("#name").html('Email : ' + response['user'])
+            $("#name").html('Name : ' + response.data['name'])
+            $("#email").html('Email : ' + response.data['email'])
+            $("#username").html('Username : ' + response.data['username'])
             // $('#name').val(response.data.user)
             // $('#reason').html(responce.value.reason)
 

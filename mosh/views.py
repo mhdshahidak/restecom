@@ -172,10 +172,12 @@ class UserDetails(APIView):
     def get(self,request,format=None):
         user = request.user.email
         print(user)
-        
-        # branchName = request.user.branch.name
-        # userSplit = user.split('@')
-        # data = userSplit[0]
-        return Response({'user':user}, status=status.HTTP_200_OK)
+        data={
+            "email":request.user.email,
+            "name":request.user.first_name,
+            "username":request.user.username,
+        }
+
+        return Response({'data':data}, status=status.HTTP_200_OK)
 
     
