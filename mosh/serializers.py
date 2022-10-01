@@ -1,43 +1,40 @@
 from rest_framework import serializers
-from . models import Product,Collection
+
+from .models import Collection, Product
+from rest_framework import permissions
 
 
 # for nested relation
 class CollectionSerializer(serializers.Serializer):
-    id= serializers.IntegerField()
-    category=serializers.CharField(max_length=225)
-
-
-
+    id = serializers.IntegerField()
+    category = serializers.CharField(max_length=225)
 
 
 class ProductSerializer(serializers.Serializer):
-    id= serializers.IntegerField()
-    name=serializers.CharField(max_length=225)
-    max_offer_price=serializers.FloatField()
+    id = serializers.IntegerField()
+    name = serializers.CharField(max_length=225)
+    max_offer_price = serializers.FloatField()
 
     # price is not in  modal Product we made a function to it
-    price=serializers.SerializerMethodField(method_name="calculate")
-    def calculate(self, product: Product):
-        return product.max_offer_price *1.1  
+    price = serializers.SerializerMethodField(method_name="calculate")
 
-    #1st method how to add forigenkey in  where it gives an id of the collection
+    def calculate(self, product: Product):
+        return product.max_offer_price * 1.1
+
+    # 1st method how to add forigenkey in  where it gives an id of the collection
     # collection =serializers.PrimaryKeyRelatedField(
     #     queryset=Collection.objects.all()
     # )
-    #2nd method how to add forigenkey in  where it gives an string name of the fk
+    # 2nd method how to add forigenkey in  where it gives an string name of the fk
     # collection =serializers.StringRelatedField()
 
-    #3rd how to add in nested object
+    # 3rd how to add in nested object
     # collection = CollectionSerializer()
 
-    #4rd how to redirect to an endpoint
+    # 4rd how to redirect to an endpoint
     collection = serializers.HyperlinkedRelatedField(
-        queryset=Collection.objects.all(),
-        view_name="collection-detail"
+        queryset=Collection.objects.all(), view_name="collection-detail"
     )
-
-
 
     # # validation
     #     def validate(self,data):
@@ -46,18 +43,15 @@ class ProductSerializer(serializers.Serializer):
     #         return(data)
 
 
-
-
-
 # modal serilizer it is used because of when we make chnage in model we should also change in serilizser to avoid this
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields =['id','name','max_offer_price','collection']
+        fields = ["id", "name", "max_offer_price", "collection"]
         # or
         # fields ='__all__'
 
-    # # to create a data    
+    # # to create a data
     # def create(self, validated_data):
     #     product=Product(**validated_data)
     #     product.other=1
@@ -70,15 +64,14 @@ class ProductSerializer(serializers.ModelSerializer):
     #     instance.save()
     #     return instance
 
-        
-
-
 
 class ExeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collection
-        fields =['id','category','count']
-        count= serializers.IntegerField()
+        fields = ["id", "category", "count"]
+        count = serializers.IntegerField()
 
 
 
+
+            
