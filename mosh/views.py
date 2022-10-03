@@ -1,16 +1,20 @@
 
+from multiprocessing import context
 from django.shortcuts import get_object_or_404,render
 from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView,CreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .models import Collection, Product
+from .models import Collection, Employee, Product
 from common.models import User
-from .serializers import CollectionSerializer, ProductSerializer
+from .serializers import CollectionSerializer, ProductSerializer,CreateUser
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.authentication import TokenAuthentication
 
+
+from . import serializers
 from .permissions import BasicUserPermission
 
 
@@ -39,6 +43,14 @@ def demo(request):
     return render(request,'index.html')
 
 
+def register(request):
+    user=Employee.objects.all()
+    context={
+        "user":user
+    }
+    return render(request,'register.html',context)    
+
+
 
 @api_view(["GET", "PUT", "PATCH", "DELETE"])
 def detail(request, id):
@@ -62,7 +74,6 @@ def detail(request, id):
     elif request.method == "PUT":
         serializer = ProductSerializer(productobj, data=request.data)
         serializer.is_valid(raise_exception=True)
-        print(serializer.validated_data)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
     elif request.method == "DELETE":
@@ -171,7 +182,6 @@ class UserDetails(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self,request,format=None):
         user = request.user.email
-        print(user)
         data={
             "email":request.user.email,
             "name":request.user.first_name,
@@ -180,4 +190,19 @@ class UserDetails(APIView):
 
         return Response({'data':data}, status=status.HTTP_200_OK)
 
-    
+    def delete(self,request,format=None):
+        userId = request.POST['id']
+        Employee.objects.get(id=userId).delete()
+        return Response({'msg':True})
+
+
+
+
+
+
+class CreateView(CreateAPIView):
+    # authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.CreateUser
+    """Create a new user in the system"""
+  

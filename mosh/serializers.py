@@ -1,7 +1,10 @@
 from rest_framework import serializers
+from django.contrib.auth.password_validation import validate_password
 
-from .models import Collection, Product
+from .models import Collection, Employee, Product
 from rest_framework import permissions
+from common.models import User
+from django.contrib.auth import get_user_model,authenticate
 
 
 # for nested relation
@@ -74,4 +77,16 @@ class ExeSerializer(serializers.ModelSerializer):
 
 
 
-            
+class CreateUser(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = "__all__"
+    def create(self, validated_data):
+        user = Employee.objects.create(
+            username=validated_data["username"],
+            password=validated_data["password"],
+            phone=validated_data["phone"],
+            name=validated_data["name"],
+        )
+        user.save()
+        return user

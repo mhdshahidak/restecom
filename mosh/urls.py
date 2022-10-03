@@ -7,6 +7,7 @@ urlpatterns = [
     path("", views.master, name="master"),
     path("login", views.login, name="login"),
     path("demo", views.demo, name="demo"),
+    path("register", views.register, name="register"),
     path("detail/<int:id>/", views.detail, name="detail"),
     path("collection/<int:pk>/", views.collection_detail, name="collection-detail"),
     path("Productlist", views.Productlist.as_view()),
@@ -16,5 +17,7 @@ urlpatterns = [
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/logout',views.Logout.as_view()),
     path('user-details/',views.UserDetails.as_view()),
+    path('add-user',views.CreateView.as_view()),
+
 
 ]
