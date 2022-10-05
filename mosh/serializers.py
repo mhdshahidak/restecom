@@ -1,7 +1,8 @@
+
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 
-from .models import Collection, Employee, Product
+from .models import Collection, Employee, Items, Product
 from rest_framework import permissions
 from common.models import User
 from django.contrib.auth import get_user_model,authenticate
@@ -90,3 +91,65 @@ class CreateUser(serializers.ModelSerializer):
         )
         user.save()
         return user
+
+
+
+
+
+
+class EmployeeRegisterSerializer(serializers.ModelSerializer):
+    # password = serializers.CharField(
+    #     write_only=True, required=True, validators=[validate_password]
+    # )
+    # password2 = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = (
+            "username",
+            "password",
+            # "password2",
+            "first_name",
+            "last_name",
+            "email",
+        )
+
+    # def validate(self, attrs):
+    #     if attrs["password"] != attrs["password2"]:
+    #         raise serializers.ValidationError(
+    #             {"password": "Password fields didn't match."}
+    #         )
+    #     return attrs
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data["username"],
+            first_name=validated_data["first_name"],
+            last_name=validated_data["last_name"],
+            email=validated_data["email"],
+        )
+        user.is_staff=True
+        user.set_password(validated_data["password"])
+        user.save()
+        return user
+
+
+
+        
+class AddItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Items
+        fields = "__all__"
+    # emp= request.employee.id
+    def get(self,request):
+        print(self.request.user.id,'*'*20)    
+    def create(self, validated_data):
+        item = Items.objects.create(
+            name=validated_data["name"],
+            category=validated_data["category"],
+            value=validated_data["value"],
+        )   
+        item.save()
+        return item
+    
+        

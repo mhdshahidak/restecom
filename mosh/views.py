@@ -9,9 +9,10 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import Collection, Employee, Product
 from common.models import User
-from .serializers import CollectionSerializer, ProductSerializer,CreateUser
+from .serializers import CollectionSerializer, ProductSerializer,CreateUser,EmployeeRegisterSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.authentication import TokenAuthentication
+from django.core.signing import TimestampSigner
 
 
 from . import serializers
@@ -42,6 +43,11 @@ def login(request):
 def demo(request):
     return render(request,'index.html')
 
+def product(request):
+    
+    return render(request,'product.html')
+
+
 
 def register(request):
     user=Employee.objects.all()
@@ -49,6 +55,10 @@ def register(request):
         "user":user
     }
     return render(request,'register.html',context)    
+
+def registeremployeee(request):
+    
+    return render(request,'registeremployeee.html')  
 
 
 
@@ -146,9 +156,10 @@ class ProductDeatils(RetrieveUpdateDestroyAPIView):
 class CheckUser(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self,request):
-        if self.request.user.is_superuser == False and self.request.user.is_active == True:
-            print('200,1st')
-            return Response({'id':self.request.user.id}, status=status.HTTP_200_OK)
+        if self.request.user.is_superuser == False and self.request.user.is_active == True and self.request.user.is_staff == False:
+            return Response({'id':self.request.user.id,"user":"user"}, status=status.HTTP_200_OK)
+        elif self.request.user.is_superuser == False and self.request.user.is_staff == True and self.request.user.is_active == True:
+            return Response({'id':self.request.user.id,"user":"staff"}, status=status.HTTP_200_OK)    
         if self.request.user.is_superuser == True and self.request.user.is_active == True and self.request.user.user != None:
             print('200,2nd')
             return Response({'id':self.request.user.id}, status=status.HTTP_200_OK)
@@ -182,6 +193,7 @@ class UserDetails(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self,request,format=None):
         user = request.user.email
+        print(user)
         data={
             "email":request.user.email,
             "name":request.user.first_name,
@@ -206,3 +218,25 @@ class CreateView(CreateAPIView):
     serializer_class = serializers.CreateUser
     """Create a new user in the system"""
   
+
+
+
+class EmployeeRegisterView(CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.EmployeeRegisterSerializer
+
+class ItemAddView(CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (IsAuthenticated,)
+    # def get(self,request,format=None):
+    #     id = request.user.id
+    #     print(id)
+    serializer_class = serializers.AddItemSerializer
+
+    # def get_object(self):
+    #     print(self.request.user,'7'*10)
+    #     return self.request.user
+
+
+    

@@ -7,7 +7,10 @@ urlpatterns = [
     path("", views.master, name="master"),
     path("login", views.login, name="login"),
     path("demo", views.demo, name="demo"),
+    path("product", views.product, name="product"),
     path("register", views.register, name="register"),
+    path("registeremployeee", views.registeremployeee, name="registeremployeee"),
+    
     path("detail/<int:id>/", views.detail, name="detail"),
     path("collection/<int:pk>/", views.collection_detail, name="collection-detail"),
     path("Productlist", views.Productlist.as_view()),
@@ -18,6 +21,11 @@ urlpatterns = [
     path('api/logout',views.Logout.as_view()),
     path('user-details/',views.UserDetails.as_view()),
     path('add-user',views.CreateView.as_view()),
+    path('employeeregistration',views.EmployeeRegisterView.as_view()),
+    path('ItemAdd',views.ItemAddView.as_view()),
+    
+    
+    
 
 
 ]
