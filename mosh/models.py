@@ -1,4 +1,5 @@
 
+from unicodedata import name
 from django.db import models
 from common.models import User
 
@@ -27,3 +28,10 @@ class Items(models.Model):
     category = models.CharField(max_length=100, null=True)
     value = models.CharField(max_length=100, null=True)
     
+
+
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=100, null=True)
+    description = models.TextField()
+    date = models.DateField(auto_now_add=True)

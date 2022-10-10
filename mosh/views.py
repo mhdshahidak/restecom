@@ -1,5 +1,4 @@
 
-from multiprocessing import context
 from django.shortcuts import get_object_or_404,render
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -7,17 +6,16 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .models import Collection, Employee, Product
+from .models import Collection, Employee, Product, Review
 from common.models import User
-from .serializers import CollectionSerializer, ProductSerializer,CreateUser,EmployeeRegisterSerializer
+from .serializers import CollectionSerializer, ProductSerializer,CreateUser,EmployeeRegisterSerializer,ReviewSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.authentication import TokenAuthentication
-from django.core.signing import TimestampSigner
-
-
+from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import ProductFilter
 from . import serializers
 from .permissions import BasicUserPermission
-
+from rest_framework.filters import SearchFilter
 
 # Create your views here.
 
@@ -239,4 +237,47 @@ class ItemAddView(CreateAPIView):
     #     return self.request.user
 
 
+
+class ProductViewSet(viewsets.ModelViewSet):
+    # filtering method1
+#    ---------------------------------------------------------
+    # def get_queryset(self):
+    #     queryset = Product.objects.all()
+    #     collection_id = self.request.query_params.get('collection_id')
+    #     if collection_id is not None:
+    #         queryset=queryset.filter(collection_id=collection_id)
+    #     return queryset
+
+
+    # filtering method2   And seraching
+#    ---------------------------------------------------------
+    queryset = Product.objects.all()
+    filter_backends =[DjangoFilterBackend,SearchFilter]
+    # filterset_fields=['collection_id','unit_price']
+    search_fields =['name']
+    filterset_class= ProductFilter
+
+    serializer_class= ProductSerializer
+
+   
+    def get_serializer_context(self):
+        return {'request':self.request}
+
+
+
+
+class CollectionViewSet(viewsets.ModelViewSet):
+    queryset = Collection.objects.all()
+    serializer_class= CollectionSerializer
+    def get_serializer_context(self):
+        return {'request':self.request}
+
+class ReviewViewSet(viewsets.ModelViewSet):
+
+    def get_queryset(self):
+        return Review.objects.filter(product_id=self.kwargs['product_pk'])
     
+    serializer_class= ReviewSerializer
+    def get_serializer_context(self):
+        print(self.kwargs['product_pk'],'^'*10)
+        return {'product_id':self.kwargs['product_pk']}

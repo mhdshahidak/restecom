@@ -31,6 +31,9 @@ INSTALLED_APPS = [
     "mosh",
     "rest_framework_simplejwt",
     'rest_framework_simplejwt.token_blacklist',
+    'registration',
+    "crispy_forms",
+    "django_filters"
 ]
 
 MIDDLEWARE = [
@@ -152,3 +155,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "common.User"
 # AUTH_USER_MODEL = 'ceo.User'
+
+ACCOUNT_ACTIVATION_DAYS = 7
+REGISTRATION_AUTO_LOGIN = True
+SEND_ACTIVATION_EMAIL = False
+REGISTRATION_EMAIL_SUBJECT_PREFIX = ''
+
+REGISTRATION_OPEN = True
+LOGIN_URL = '/app/accounts/login/'
+LOGOUT_URL = '/app/accounts/logout/'
+LOGIN_REDIRECT_URL = '/admin/'
