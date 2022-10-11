@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "common",
     "mosh",
+    'web',
+    'shoping',
     "rest_framework_simplejwt",
     'rest_framework_simplejwt.token_blacklist',
     'registration',
@@ -79,6 +81,10 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.BasicAuthentication",
     ),
+     # PAGINATION TO ALL PAGES
+    # "PAGE_SIZE":10,
+    # "DEFAULT_PAGINATION_CLASS":'rest_framework.pagination.PageNumberPagination'
+    # "DEFAULT_PAGINATION_CLASS":'rest_framework.pagination.LimitOffsetPagination'
 }
 
 SIMPLE_JWT = {

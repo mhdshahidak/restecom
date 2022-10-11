@@ -20,6 +20,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("common.urls")),
     path("user/", include("mosh.urls")),
+    path("web/", include("web.urls")),
+    path("shop/", include("shoping.urls")),
     path('accounts/', include('registration.backends.default.urls')),
     path('accounts/', include('registration.backends.simple.urls')),
 ]
