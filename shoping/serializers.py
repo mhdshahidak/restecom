@@ -1,9 +1,11 @@
 
-from asyncore import read
+
+
 from rest_framework import serializers
 from mosh.serializers import ProductSerializer
+from common.models import User
 from .models import Cart, CartItems
-from mosh.models import Product
+from mosh.models import Product,Employee
 
 
 class Simpleproductserializer(serializers.ModelSerializer):  
@@ -92,3 +94,22 @@ class UpdateCartItemsListerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItems  
         fields = ['price'] 
+
+
+# djoser
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField()
+    # userobj=User.objects.get(id=user__id)
+    class Meta:
+        model = Employee
+        fields=['id','user_id','phone','username']
+    def create(self, validated_data):
+        user = Employee.objects.create(
+            phone=validated_data["phone"],
+            username=validated_data["username"],
+            user_id=validated_data["user_id"],
+        )
+        user.save()
+        return user    
+    

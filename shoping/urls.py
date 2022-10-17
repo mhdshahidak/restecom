@@ -7,6 +7,7 @@ from . import views
 router = DefaultRouter()
 router.register('cart',views.CartViewset)
 router.register('item',views.CartViewset)
+router.register('employee',views.EmployeeViewSet)
 # urlpatterns=router.urls
 
 carts_router=routers.NestedDefaultRouter(router,'cart',lookup='cart')

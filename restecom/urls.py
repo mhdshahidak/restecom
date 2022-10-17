@@ -24,4 +24,6 @@ urlpatterns = [
     path("shop/", include("shoping.urls")),
     path('accounts/', include('registration.backends.default.urls')),
     path('accounts/', include('registration.backends.simple.urls')),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.jwt')),
 ]

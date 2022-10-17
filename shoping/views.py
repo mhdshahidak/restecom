@@ -1,13 +1,17 @@
+
 from django.shortcuts import render
 
 
 
-from rest_framework.mixins import CreateModelMixin,RetrieveModelMixin,DestroyModelMixin,ListModelMixin
+from rest_framework.mixins import CreateModelMixin,RetrieveModelMixin,DestroyModelMixin,ListModelMixin,UpdateModelMixin
 from rest_framework.viewsets import GenericViewSet,ModelViewSet
 from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated,AllowAny
 
 from .models import Cart,CartItems
-from .serializers import AddCartItemsListerializer, Cartserializer,CartItemserializer,CartItemsListerializer,UpdateCartItemsListerializer
+from mosh.models import Employee
+from .serializers import AddCartItemsListerializer, Cartserializer,CartItemserializer,CartItemsListerializer,UpdateCartItemsListerializer,EmployeeSerializer
 # Create your views here.
 
 # only want yo create get and delect so we create a modelviewset
@@ -33,3 +37,29 @@ class CartItemViewset(ModelViewSet,ListModelMixin):
     def get_queryset(self):
         return CartItems.objects.filter(cart_id=self.kwargs['cart_pk']).select_related('product')
     
+
+
+class EmployeeViewSet(CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,GenericViewSet):
+    queryset= Employee.objects.all()   
+    serializer_class = EmployeeSerializer
+    # permission_classes=[IsAuthenticated]
+    def get_permissions(self):
+        if self.request.method ==" GET":
+            return[AllowAny()]
+        return[IsAuthenticated()]  
+    @action(detail=False,methods=['GET','PUT'])
+    def me(self,request):
+        (employee,created) = Employee.objects.get_or_create(user_id=request.user.id)
+        if request.method == 'GET':
+            serializer=EmployeeSerializer(employee)
+            return Response(serializer.data)
+        elif request.method == 'PUT':
+            serializer=EmployeeSerializer(employee,data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+
+
+
+
+

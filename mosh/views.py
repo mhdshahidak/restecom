@@ -14,7 +14,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from . import serializers
 from .permissions import BasicUserPermission
-
+import json
 
 # Create your views here.
 
@@ -24,6 +24,7 @@ def master(request):
     if request.method == "GET":
         proall = Product.objects.select_related("collection").all()
         serializer = ProductSerializer(proall, many=True, context={"request": request})
+        # return json.dumps(serializer.data)
         return Response(serializer.data)
     elif request.method == "POST":
 

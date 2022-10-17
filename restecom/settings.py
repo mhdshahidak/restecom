@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'registration',
     "crispy_forms",
-    "django_filters"
+    "django_filters",
+    'djoser',
 ]
 
 MIDDLEWARE = [
@@ -88,6 +89,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
+    "AUTH_HEADER_TYPES":('JWT',),
     "ACCESS_TOKEN_LIFETIME": timedelta(days=90),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
     "ROTATE_REFRESH_TOKENS": False,
@@ -171,3 +173,10 @@ REGISTRATION_OPEN = True
 LOGIN_URL = '/app/accounts/login/'
 LOGOUT_URL = '/app/accounts/logout/'
 LOGIN_REDIRECT_URL = '/admin/'
+
+
+DJOSER={
+    'SERIALIZERS':{
+        'user_create':'web.serializers.UserCreateSerializer'
+    }
+}

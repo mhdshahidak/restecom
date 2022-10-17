@@ -1,4 +1,5 @@
 
+from pyexpat import model
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 
@@ -163,3 +164,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         product_id= self.context['product_id']
         return Review.objects.create(product_id=product_id,**validated_data)
+
+
+
+
