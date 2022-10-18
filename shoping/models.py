@@ -1,8 +1,8 @@
 
 from django.db import models
 from uuid import uuid4
-from mosh.models import Product
-
+from mosh.models import Product,Collection
+ 
 
 # Create your models here.
 
@@ -26,3 +26,11 @@ class CartItems(models.Model):
 
     class meta:
         unique_together=[['cart','product']]
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Collection, on_delete=models.CASCADE, null=True,related_name="order")
+    # cart = models.ForeignKey(CartItems, on_delete=models.CASCADE, null=True,related_name="cartitem")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+    price =models.IntegerField( null=True)
+
+        

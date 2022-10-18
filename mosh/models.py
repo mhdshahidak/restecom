@@ -6,6 +6,7 @@ from common.models import User
 # Create your models here.
 class Collection(models.Model):
     category = models.CharField(max_length=100, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True,null=True,related_name='user')
 
 
 class Product(models.Model):
@@ -13,7 +14,7 @@ class Product(models.Model):
     buying_price = models.FloatField(null=True)
     max_offer_price = models.FloatField(null=True)
     qty = models.IntegerField(null=True)
-    collection = models.ForeignKey(Collection, on_delete=models.CASCADE, null=True)
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE, null=True,related_name='collection')
     
 
 class Employee(models.Model):
@@ -22,6 +23,10 @@ class Employee(models.Model):
     username = models.CharField(max_length=100, null=True)
     password = models.CharField(max_length=100, null=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    class Meta:
+        permissions=[
+            ('view_history','Can View History')
+        ]
 
 class Items(models.Model):
     employee = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

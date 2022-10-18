@@ -23,6 +23,7 @@ from . import views
 router = DefaultRouter()
 router.register('Productlist',views.ProductViewSet,basename="products")
 router.register('collection',views.CollectionViewSet)
+router.register('order',views.OrderViewSet)
 Productsrouter = routers.NestedDefaultRouter(router,'Productlist',lookup='product')
 Productsrouter.register('review',views.ReviewViewSet, basename="product-review")
 urlpatterns=router.urls +Productsrouter.urls

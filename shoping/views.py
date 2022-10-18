@@ -7,11 +7,12 @@ from rest_framework.mixins import CreateModelMixin,RetrieveModelMixin,DestroyMod
 from rest_framework.viewsets import GenericViewSet,ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.permissions import IsAuthenticated,AllowAny,DjangoModelPermissions,IsAdminUser
 
 from .models import Cart,CartItems
 from mosh.models import Employee
 from .serializers import AddCartItemsListerializer, Cartserializer,CartItemserializer,CartItemsListerializer,UpdateCartItemsListerializer,EmployeeSerializer
+from web.permission import FullDjangoModelPermission,ViewCustomerHistoryPermission
 # Create your views here.
 
 # only want yo create get and delect so we create a modelviewset
@@ -42,7 +43,7 @@ class CartItemViewset(ModelViewSet,ListModelMixin):
 class EmployeeViewSet(CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,GenericViewSet):
     queryset= Employee.objects.all()   
     serializer_class = EmployeeSerializer
-    # permission_classes=[IsAuthenticated]
+    permission_classes=[IsAdminUser]
     def get_permissions(self):
         if self.request.method ==" GET":
             return[AllowAny()]
@@ -58,6 +59,11 @@ class EmployeeViewSet(CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,Gener
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
+
+    @action(detail=True,permission_classes=[ViewCustomerHistoryPermission])        
+    def history(self,request,pk):
+        return Response('ok')
+
 
 
 
